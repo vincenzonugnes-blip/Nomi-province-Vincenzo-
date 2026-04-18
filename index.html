@@ -9,8 +9,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Renovit">
 <title>Renovit Strutture</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
     --verde: #2d6a2d;
@@ -572,13 +570,36 @@ const comuni = [
 ];
 
 // ============================================================
-// STORAGE NOTE
+// NOTE SU GOOGLE SHEETS
 // ============================================================
-function getNota(comune, nome) {
-  return localStorage.getItem('nota_' + comune + '_' + nome) || '';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyj6ytxi-LkPGp6E15ffnd5gunLgZaQ_KEKTQbNcen3VYjInR9TB8PoEk_c8WjVbZL_zA/exec';
+let noteCache = {};
+
+async function caricaNote() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    data.forEach(r => {
+      if (r.comune && r.nome) noteCache[r.comune + '||' + r.nome] = r.nota || '';
+    });
+    render(comuni);
+  } catch(e) { console.warn('Note non caricate:', e); }
 }
-function setNota(comune, nome, testo) {
-  localStorage.setItem('nota_' + comune + '_' + nome, testo);
+
+function getNota(comune, nome) {
+  return noteCache[comune + '||' + nome] || '';
+}
+
+async function setNota(comune, nome, testo) {
+  noteCache[comune + '||' + nome] = testo;
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ comune, nome, nota: testo })
+    });
+  } catch(e) { console.warn('Errore salvataggio:', e); }
 }
 
 // ============================================================
@@ -706,11 +727,12 @@ function toggleNota() {
   document.getElementById('notaEditor').classList.toggle('show');
 }
 
-function salvaNota() {
+async function salvaNota() {
   if (!currentStruttura) return;
   const { comune, s } = currentStruttura;
   const testo = document.getElementById('notaText').value.trim();
-  setNota(comune.nome, s.nome, testo);
+  mostraToast('Salvataggio...');
+  await setNota(comune.nome, s.nome, testo);
   document.getElementById('notaEditor').classList.remove('show');
   mostraToast('Nota salvata ✓');
   render(comuni);
@@ -754,12 +776,8 @@ function mostraToast(msg) {
 // ============================================================
 // INIT
 // ============================================================
+caricaNote();
 render(comuni);
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
 </script>
 </body>
 </html>
