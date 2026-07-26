@@ -3,757 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a3a1a">
+<meta name="theme-color" content="#173f2b">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Renovit">
+<meta name="apple-mobile-web-app-title" content="Strutture">
+<link rel="manifest" href="manifest.json">
 <title>Renovit Strutture</title>
 <style>
-  :root {
-    --verde: #2d6a2d;
-    --verde-scuro: #1a3a1a;
-    --verde-chiaro: #4a9a4a;
-    --giallo: #f5c842;
-    --bianco: #ffffff;
-    --grigio-bg: #f0f2f0;
-    --grigio-card: #e8ece8;
-    --testo: #1a2a1a;
-    --ombra: rgba(0,0,0,0.15);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--grigio-bg);
-    color: var(--testo);
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
-
-  /* HEADER */
-  header {
-    background: var(--verde-scuro);
-    color: white;
-    padding: 14px 16px 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px var(--ombra);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  header img {
-    height: 32px;
-    filter: brightness(0) invert(1);
-  }
-
-  header h1 {
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-  }
-
-  header span {
-    font-size: 11px;
-    opacity: 0.7;
-    display: block;
-  }
-
-  /* SEARCH */
-  .search-box {
-    padding: 12px 16px 8px;
-    background: var(--verde-scuro);
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 10px 14px;
-    border-radius: 24px;
-    border: none;
-    font-size: 14px;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    outline: none;
-  }
-
-  .search-box input::placeholder { color: rgba(255,255,255,0.6); }
-
-  /* COMUNE SECTION */
-  .comune-section {
-    margin: 12px 12px 0;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 6px var(--ombra);
-  }
-
-  .comune-header {
-    background: var(--verde);
-    color: white;
-    padding: 13px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.2s;
-  }
-
-  .comune-header:active { background: var(--verde-chiaro); }
-
-  .comune-header h2 {
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .comune-header .badge {
-    background: rgba(255,255,255,0.25);
-    border-radius: 12px;
-    padding: 2px 10px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .chevron {
-    transition: transform 0.3s;
-    font-size: 12px;
-  }
-  .chevron.open { transform: rotate(180deg); }
-
-  /* STRUTTURE LIST */
-  .strutture-list {
-    background: white;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease;
-  }
-  .strutture-list.open { max-height: 2000px; }
-
-  .struttura-item {
-    border-bottom: 1px solid #e8ece8;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background 0.15s;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .struttura-item:last-child { border-bottom: none; }
-  .struttura-item:active { background: #f0f5f0; }
-
-  .struttura-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: var(--grigio-card);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .struttura-info { flex: 1; min-width: 0; }
-
-  .struttura-nome {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--testo);
-    line-height: 1.3;
-  }
-
-  .struttura-indirizzo {
-    font-size: 11px;
-    color: #666;
-    margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .struttura-badges {
-    display: flex;
-    gap: 4px;
-    margin-top: 5px;
-    flex-wrap: wrap;
-  }
-
-  .badge-small {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 10px;
-    font-weight: 600;
-  }
-
-  .badge-remoto { background: #e3f2e3; color: #2d6a2d; }
-  .badge-fisico { background: #fff3cd; color: #856404; }
-  .badge-entrambi { background: #e3eef8; color: #1a5276; }
-  .badge-keybox { background: #fce4ec; color: #880e4f; }
-  .badge-nota { background: #f3e5f5; color: #6a1b9a; }
-
-  .struttura-arrow {
-    color: #bbb;
-    font-size: 16px;
-    margin-top: 8px;
-  }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 200;
-    display: flex;
-    align-items: flex-end;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s;
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-  .modal {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    width: 100%;
-    padding: 0 0 40px;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-    max-height: 85vh;
-    overflow-y: auto;
-  }
-  .modal-overlay.open .modal { transform: translateY(0); }
-
-  .modal-handle {
-    width: 40px;
-    height: 4px;
-    background: #ddd;
-    border-radius: 2px;
-    margin: 12px auto 0;
-  }
-
-  .modal-header {
-    padding: 16px 20px 12px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .modal-comune {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--verde);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .modal-nome {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--testo);
-    margin-top: 3px;
-    line-height: 1.3;
-  }
-
-  .modal-indirizzo {
-    font-size: 13px;
-    color: #555;
-    margin-top: 4px;
-  }
-
-  .modal-body { padding: 16px 20px; }
-
-  .info-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 12px;
-    padding: 10px 12px;
-    background: var(--grigio-bg);
-    border-radius: 10px;
-  }
-
-  .info-row .icon { font-size: 18px; flex-shrink: 0; }
-  .info-row .label { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .info-row .value { font-size: 13px; color: var(--testo); margin-top: 1px; font-weight: 500; }
-
-  /* AZIONI */
-  .azioni {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    padding: 0 20px;
-    margin-top: 8px;
-  }
-
-  .btn-azione {
-    padding: 14px 12px;
-    border-radius: 14px;
-    border: none;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-
-  .btn-azione:active { transform: scale(0.96); }
-
-  .btn-maps {
-    background: var(--verde);
-    color: white;
-    box-shadow: 0 4px 12px rgba(45,106,45,0.3);
-  }
-
-  .btn-nota {
-    background: var(--giallo);
-    color: #333;
-    box-shadow: 0 4px 12px rgba(245,200,66,0.3);
-  }
-
-  .btn-azione .btn-icon { font-size: 24px; }
-  .btn-azione .btn-label { font-size: 12px; }
-
-  /* NOTA EDITOR */
-  .nota-editor {
-    padding: 0 20px;
-    margin-top: 12px;
-    display: none;
-  }
-  .nota-editor.show { display: block; }
-
-  .nota-editor textarea {
-    width: 100%;
-    border: 2px solid var(--verde);
-    border-radius: 10px;
-    padding: 10px 12px;
-    font-size: 13px;
-    font-family: inherit;
-    resize: none;
-    height: 90px;
-    outline: none;
-  }
-
-  .nota-editor .btn-salva {
-    margin-top: 8px;
-    width: 100%;
-    padding: 12px;
-    background: var(--verde);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--verde-scuro);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 24px;
-    font-size: 13px;
-    font-weight: 600;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 300;
-    white-space: nowrap;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* FOOTER */
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: var(--verde-scuro);
-    color: rgba(255,255,255,0.6);
-    text-align: center;
-    font-size: 10px;
-    padding: 8px;
-    letter-spacing: 0.5px;
-  }
-
-  .hidden { display: none !important; }
+:root{
+  --green:#246b45;--green2:#173f2b;--green3:#2f8b5b;--yellow:#f4c84a;
+  --bg:#eef2ef;--card:#fff;--text:#18221d;--muted:#6d7771;--line:#dfe6e1;
+  --shadow:0 8px 24px rgba(19,51,34,.12);--danger:#a43131;
+}
+body.dark{
+  --bg:#101713;--card:#18211c;--text:#edf4ef;--muted:#a9b6ad;--line:#2d3931;
+  --shadow:0 8px 24px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Segoe UI,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:82px}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.top{
+  position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--green2),var(--green));
+  color:#fff;padding:14px 14px 12px;box-shadow:0 3px 14px rgba(0,0,0,.22)
+}
+.head{display:flex;align-items:center;gap:11px}
+.logo{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:23px}
+.title{flex:1}.title h1{font-size:18px}.title p{font-size:11px;opacity:.75;margin-top:2px}
+.icon-btn{border:0;background:rgba(255,255,255,.14);color:#fff;width:40px;height:40px;border-radius:12px;font-size:18px}
+.search-wrap{display:flex;gap:8px;margin-top:12px}
+.search-wrap input{flex:1;min-width:0;border:0;outline:0;border-radius:14px;padding:12px 14px;background:rgba(255,255,255,.15);color:#fff}
+.search-wrap input::placeholder{color:rgba(255,255,255,.7)}
+.clear{display:none;border:0;border-radius:12px;padding:0 14px;background:#fff;color:var(--green2);font-weight:800}
+.toolbar{display:flex;gap:8px;padding:11px 12px 0;overflow-x:auto}
+.tool{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--text);padding:9px 12px;border-radius:12px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.tool.active{background:var(--green);color:#fff;border-color:var(--green)}
+.stats{padding:10px 14px 2px;color:var(--muted);font-size:12px}
+.section{margin:11px 12px 0;border-radius:16px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+.section-head{border:0;width:100%;background:var(--green);color:#fff;padding:14px 15px;display:flex;align-items:center;justify-content:space-between;text-align:left}
+.section-head h2{font-size:14px;letter-spacing:.7px}
+.count{background:rgba(255,255,255,.18);padding:4px 9px;border-radius:999px;font-size:11px}
+.list{display:none}.list.open{display:block}
+.item{display:flex;align-items:flex-start;gap:11px;padding:13px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.item:last-child{border-bottom:0}.item:active{background:rgba(36,107,69,.08)}
+.iicon{width:40px;height:40px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+.idata{flex:1;min-width:0}.iname{font-size:13px;font-weight:750;line-height:1.25}.iaddr{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.badge{font-size:10px;padding:3px 7px;border-radius:999px;background:#e7f3eb;color:#235f40;font-weight:700}
+body.dark .badge{background:#253d2f;color:#bfe0ca}
+.star{font-size:20px;color:#c5cbc7;margin-top:7px}
+.empty{margin:26px 14px;padding:28px 18px;border-radius:16px;background:var(--card);text-align:center;color:var(--muted);box-shadow:var(--shadow)}
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.58);display:none;align-items:flex-end}
+.overlay.open{display:flex}
+.modal{width:100%;max-height:90vh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.modal-top{position:sticky;top:0;background:var(--card);z-index:2;padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;gap:12px}
+.modal-txt{flex:1}.mcom{font-size:11px;color:var(--green3);font-weight:800;letter-spacing:.8px}.mname{font-size:18px;font-weight:800;margin-top:3px}.maddr{font-size:12px;color:var(--muted);margin-top:4px}
+.close{border:0;background:var(--bg);color:var(--text);width:40px;height:40px;border-radius:12px;font-size:21px}
+.modal-body{padding:14px 16px 25px}
+.info{background:var(--bg);padding:11px 12px;border-radius:13px;margin-bottom:9px}.label{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px}.value{font-size:13px;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+.action{border:0;border-radius:14px;padding:13px 8px;font-size:12px;font-weight:800}
+.primary{background:var(--green);color:#fff}.secondary{background:var(--yellow);color:#27220d}.neutral{background:var(--bg);color:var(--text)}
+.note-box{display:none;margin-top:12px}.note-box.show{display:block}.note-box textarea{width:100%;min-height:110px;border:2px solid var(--green);background:var(--card);color:var(--text);border-radius:13px;padding:11px;outline:0;resize:vertical}
+.note-buttons{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
+.save{border:0;border-radius:12px;background:var(--green);color:#fff;padding:12px;font-weight:800}
+.delete{border:0;border-radius:12px;background:#f3dddd;color:var(--danger);padding:12px;font-weight:800}
+.menu{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.45);display:none;align-items:flex-end}.menu.open{display:flex}
+.sheet{width:100%;background:var(--card);border-radius:22px 22px 0 0;padding:16px 16px 28px}.sheet h3{font-size:16px;margin-bottom:12px}
+.sheet button,.file-label{display:block;width:100%;border:0;background:var(--bg);color:var(--text);padding:13px;border-radius:12px;margin-top:8px;text-align:left;font-weight:700}
+.file-label input{display:none}
+.toast{position:fixed;left:50%;bottom:88px;z-index:200;transform:translate(-50%,20px);opacity:0;background:var(--green2);color:#fff;padding:10px 17px;border-radius:999px;font-size:12px;font-weight:750;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+footer{position:fixed;bottom:0;width:100%;z-index:40;background:var(--green2);color:rgba(255,255,255,.72);padding:9px;text-align:center;font-size:10px}
+@media(min-width:720px){.top,.toolbar,.stats,#mainContent{max-width:760px;margin-left:auto;margin-right:auto}.modal,.sheet{max-width:720px;margin:auto}.overlay,.menu{align-items:center}.modal,.sheet{border-radius:22px}}
 </style>
 </head>
 <body>
-
-<header>
-  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAuAHcDASIAAhEBAxEB/8QAHQAAAQQDAQEAAAAAAAAAAAAAAAUGBwgBAgQDCf/EADsQAAEDAwIEAQgHCAMAAAAAAAECAwQABREGIQcSEzFBCBQiUWFzgZEyMzdxobGyFRYjNTZCUrHyfB" alt="Renovit">
-  <div>
-    <h1>Renovit Strutture</h1>
-    <span>Provincia di Milano</span>
+<div class="top">
+  <div class="head">
+    <div class="logo">🧰</div>
+    <div class="title"><h1>Renovit Strutture</h1><p>Provincia di Milano · archivio personale</p></div>
+    <button class="icon-btn" onclick="toggleDark()" title="Tema">◐</button>
+    <button class="icon-btn" onclick="openMenu()" title="Menu">⋮</button>
   </div>
-</header>
-
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="🔍  Cerca struttura o indirizzo..." oninput="filterStrutture(this.value)">
+  <div class="search-wrap">
+    <input id="searchInput" type="search" placeholder="Cerca luogo, comune, indirizzo o nota…" oninput="searchNow()">
+    <button id="clearBtn" class="clear" onclick="clearSearch()">✕</button>
+  </div>
 </div>
 
-<div id="mainContent"></div>
+<div class="toolbar">
+  <button id="allBtn" class="tool active" onclick="setFilter('all')">Tutte</button>
+  <button id="favBtn" class="tool" onclick="setFilter('fav')">⭐ Preferite</button>
+  <button id="notesBtn" class="tool" onclick="setFilter('notes')">✏️ Con note</button>
+  <button class="tool" onclick="expandAll()">Apri tutto</button>
+  <button class="tool" onclick="collapseAll()">Chiudi tutto</button>
+</div>
+<div class="stats" id="stats"></div>
+<main id="mainContent"></main>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="closeModal(event)">
-  <div class="modal" id="modalContent">
-    <div class="modal-handle"></div>
-    <div class="modal-header">
-      <div class="modal-comune" id="mComune"></div>
-      <div class="modal-nome" id="mNome"></div>
-      <div class="modal-indirizzo" id="mIndirizzo"></div>
+<div class="overlay" id="modal" onclick="overlayClose(event)">
+  <section class="modal">
+    <div class="modal-top">
+      <div class="modal-txt">
+        <div class="mcom" id="mComune"></div>
+        <div class="mname" id="mNome"></div>
+        <div class="maddr" id="mIndirizzo"></div>
+      </div>
+      <button class="close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="info-row" id="mGestioneRow">
-        <span class="icon">⚙️</span>
-        <div>
-          <div class="label">Gestione</div>
-          <div class="value" id="mGestione"></div>
-        </div>
+      <div class="info" id="posRow"><div class="label">📍 Informazioni accesso / posizione</div><div class="value" id="mPos"></div></div>
+      <div class="info" id="gestRow"><div class="label">⚙️ Gestione</div><div class="value" id="mGest"></div></div>
+      <div class="info" id="keyRow"><div class="label">🔑 Keybox</div><div class="value" id="mKey"></div></div>
+      <div class="info" id="noteRow"><div class="label">✏️ Nota personale</div><div class="value" id="mNote"></div></div>
+      <div class="actions">
+        <button class="action primary" onclick="openMaps()">🗺️ Apri Maps</button>
+        <button class="action secondary" onclick="copyAddress()">📋 Copia indirizzo</button>
+        <button class="action neutral" onclick="toggleFavorite()">⭐ Preferita</button>
+        <button class="action neutral" onclick="toggleNote()">✏️ Modifica nota</button>
       </div>
-      <div class="info-row" id="mKeyboxRow">
-        <span class="icon">🔑</span>
-        <div>
-          <div class="label">Keybox</div>
-          <div class="value" id="mKeybox"></div>
-        </div>
-      </div>
-      <div class="info-row" id="mNotaPosRow">
-        <span class="icon">📍</span>
-        <div>
-          <div class="label">Nota posizione</div>
-          <div class="value" id="mNotaPos"></div>
-        </div>
-      </div>
-      <div class="info-row" id="mNotaGenRow">
-        <span class="icon">📋</span>
-        <div>
-          <div class="label">Note generali</div>
-          <div class="value" id="mNotaGen"></div>
+      <div class="note-box" id="noteBox">
+        <textarea id="noteText" placeholder="Scrivi informazioni utili, accessi, contatori, materiali, anomalie…"></textarea>
+        <div class="note-buttons">
+          <button class="save" onclick="saveNote()">💾 Salva nota</button>
+          <button class="delete" onclick="deleteNote()">Elimina</button>
         </div>
       </div>
     </div>
-    <div class="azioni">
-      <button class="btn-azione btn-maps" onclick="apriMaps()">
-        <span class="btn-icon">🗺️</span>
-        <span class="btn-label">Naviga con Maps</span>
-      </button>
-      <button class="btn-azione btn-nota" onclick="toggleNota()">
-        <span class="btn-icon">✏️</span>
-        <span class="btn-label">Scrivi nota</span>
-      </button>
-    </div>
-    <div class="nota-editor" id="notaEditor">
-      <textarea id="notaText" placeholder="Scrivi qui la tua nota..."></textarea>
-      <button class="btn-salva" onclick="salvaNota()">💾 Salva nota</button>
-    </div>
+  </section>
+</div>
+
+<div class="menu" id="menu" onclick="menuClose(event)">
+  <div class="sheet">
+    <h3>Gestione dati</h3>
+    <button onclick="exportData()">⬇️ Esporta note e preferiti</button>
+    <label class="file-label">⬆️ Importa backup<input type="file" accept=".json,application/json" onchange="importData(event)"></label>
+    <button onclick="toggleDark()">◐ Cambia tema</button>
+    <button onclick="closeMenu()">Chiudi</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-
-<footer>Renovit S.p.A. · Gestione Impianti Provincia Milano</footer>
+<footer>Renovit Strutture · dati salvati sul dispositivo</footer>
 
 <script>
-// ============================================================
-// DATI STRUTTURE
-// ============================================================
-const comuni = [
-  {
-    nome: "CORSICO",
-    foglio: 1,
-    strutture: [
-      { nome: "Sc. Prim. Battisti", indirizzo: "V. Battisti, 4 — Corsico", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/bovYVM6XwZznPczn9" },
-      { nome: "Sc. Prim. Cabassina", indirizzo: "V. Passaggio Curiel — Corsico", icon: "🏫", notaPos: "Ingresso da V. Marzabotto, seguire indicazioni scuola" },
-      { nome: "Sc. Prim. Dante", indirizzo: "V. Dante, 5/7 — Corsico", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/gyRaFQCa4De79WuX9" },
-      { nome: "Sc. Prim. Malakoff", indirizzo: "V. Malakoff — Corsico", icon: "🏫" },
-      { nome: "Sc. prim. Parini", indirizzo: "V. Parini — Corsico", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/vYRHqNR7hkn6xo6x5", notaPos: "Link diretto all'ingresso scuola media Parini" },
-    ]
-  },
-  {
-    nome: "GAGGIANO",
-    foglio: 1,
-    strutture: [
-      { nome: "Sc. Me. Bramante", indirizzo: "V. Al Cornicione 35 — Gaggiano", icon: "🏫" },
-      { nome: "Municipio", indirizzo: "V. Roma 36 — Gaggiano", icon: "🏛️", mapsUrl: "https://maps.app.goo.gl/tcMrsiPCbkYyku1g6", notaPos: "Ingresso posteriore" },
-      { nome: "Sc. El. Matteotti", indirizzo: "V. Matteotti 19 — Gaggiano", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/HZn3CpGjszd4SgXt8" },
-      { nome: "Asilo Nido + C.S.S. + Farm.", indirizzo: "V. de Gasperi 12 — Gaggiano", icon: "🏥", mapsUrl: "https://maps.app.goo.gl/kVQKJzDrJJHkJYLG7" },
-      { nome: "Centro Diurno Anziani", indirizzo: "V. Gozzadini 27 — Gaggiano", icon: "🏠", mapsUrl: "https://maps.app.goo.gl/hsfa8XvfpLpnnQJU9" },
-      { nome: "Sc. Mat. Vigano (ex Scuola Materna)", indirizzo: "V. Certosa 9 — Gaggiano", icon: "🏛️", mapsUrl: "https://maps.app.goo.gl/rkY6BEZat6WpnKxQ6", notaPos: "Ora Centro Culturale. Verificare denominazione attuale" },
-    ]
-  },
-  {
-    nome: "MOTTA VISCONTI",
-    foglio: 1,
-    strutture: [
-      { nome: "Sede Municipale", indirizzo: "P.za San Rocco 9/a — Motta Visconti", icon: "🏛️", mapsUrl: "https://maps.app.goo.gl/ygKsvc3kviQm2dEb8", notaPos: "Link diretto all'ingresso municipio" },
-      { nome: "KCS Caregiver (ex RSA)", indirizzo: "P.za 14 Luglio — Motta Visconti", icon: "🏥", mapsUrl: "https://maps.app.goo.gl/bJJh7rkApG9bpr997" },
-      { nome: "Centro Polisportivo Piscina — Gas/CT", indirizzo: "Vi. Ticino, 27 — Motta Visconti", icon: "🏊", mapsUrl: "https://maps.app.goo.gl/bez6e775JzPuFpxY9", notaPos: "Lettura gas e centrale termica in questo punto" },
-      { nome: "Centro Polisportivo Piscina — EE", indirizzo: "Vi. Ticino, 27 — Motta Visconti", icon: "⚡", mapsUrl: "https://maps.app.goo.gl/6uAGu24FNE8TWzraA", notaPos: "Contatore energia elettrica sul lato opposto al campo" },
-      { nome: "Vecchio Torchio", indirizzo: "V. Annoni 11 — Motta Visconti", icon: "🏠" },
-      { nome: "Asilo Nido — EE", indirizzo: "V. Don Giovanni Bosco 48 — Motta Visconti", icon: "👶", mapsUrl: "https://maps.app.goo.gl/fxUSU1aRaurqsXFF9", notaPos: "Contatore energia elettrica. Gas approssimativo: https://maps.app.goo.gl/1N5oJ1gsYtV5owZF7" },
-    ]
-  },
-  {
-    nome: "TREZZANO S/N",
-    foglio: 1,
-    strutture: [
-      { nome: "Sc. Mat. Verdi", indirizzo: "V. Verdi — Trezzano S/N", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/DYtUHmFuUPq14zVA9", notaPos: "Ingresso per lettura EE. Gas in comune con Sc. Papa Giovanni XXIII (cancello bianco V. Turati)" },
-      { nome: "Sc. El. Papa G. XXIII", indirizzo: "V. A. Manzoni, 11 — Trezzano S/N", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/6sCYwrzUfW4EkwiW7", notaPos: "Contatore EE qui. Gas poco più avanti: https://maps.app.goo.gl/zBk16vBPsCpLTo8s6 — Gas condiviso con Sc. Verdi" },
-      { nome: "Sede Comunale + Beltramini + Turati", indirizzo: "V. IV Novembre 2/4 — Trezzano S/N", icon: "🏛️", mapsUrl: "https://maps.app.goo.gl/yFG3QyaaeCDwNQ2Y7", notaPos: "Unico ingresso per Sede Comunale, Sc. Mat. Beltramini e Sc. El. Turati. Contatori da individuare internamente, non segnalabili su Maps" },
-      { nome: "Sc. Mat. R. Beltramini", indirizzo: "V. Rimembranze 2 — Trezzano S/N", icon: "🏫", notaPos: "Vedere voce Sede Comunale per accesso e contatori" },
-      { nome: "Sc. El. Turati", indirizzo: "V. IV Novembre — Trezzano S/N", icon: "🏫", notaPos: "Vedere voce Sede Comunale per accesso e contatori" },
-      { nome: "Plesso Giacosa Fogazzaro", indirizzo: "V. Giacosa 14/27 — Trezzano S/N", icon: "🏫", mapsUrl: "https://maps.app.goo.gl/gqKbpw3gjEXCawp9A", notaPos: "Ingresso principale qui. Centrale termica interna: https://maps.app.goo.gl/jsyEsxpLFLPrcARk6" },
-    ]
-  },
-  {
-    nome: "GAGGIANO — 3° Resp.",
-    foglio: 2,
-    strutture: [
-      { nome: "Appartamenti", indirizzo: "V. Medici 4 — Fagnano (Gaggiano)", icon: "🏠" },
-      { nome: "Chiesa", indirizzo: "V. Medici — Fagnano (Gaggiano)", icon: "⛪" },
-      { nome: "C.to Socio Sanitario", indirizzo: "V. Marta Lodi — S.Vito (Gaggiano)", icon: "🏥" },
-      { nome: "C.to Sportivo", indirizzo: "V. Marta Lodi — S.Vito (Gaggiano)", icon: "⚽" },
-      { nome: "Spogliatoio C.Calcio", indirizzo: "V. Don Minzoni — Vigano (Gaggiano)", icon: "⚽" },
-      { nome: "C.to Sportivo (palestrina)", indirizzo: "V. Nazaurio Sauro — Vigano (Gaggiano)", icon: "🏋️" },
-      { nome: "Sc. Mat. Bonirola", indirizzo: "V. Italia 22 — Gaggiano", icon: "🏫" },
-      { nome: "Palestra Sc. Elementare", indirizzo: "V. Dante — Gaggiano", icon: "🏋️" },
-    ]
-  },
-  {
-    nome: "TREZZANO S/N — 3° Resp.",
-    foglio: 2,
-    strutture: [
-      { nome: "Sc.El/Mat. Franceschi", indirizzo: "V. A. Caro — Trezzano S/N", icon: "🏫" },
-      { nome: "Uffici Comunali", indirizzo: "V. Boito 5/7 — Trezzano S/N", icon: "🏛️" },
-      { nome: "Sc. El/Mat Bruto", indirizzo: "V. Catalani — Trezzano S/N", icon: "🏫" },
-      { nome: "Sc. Media Gobetti A", indirizzo: "V. Tintoretto 1A — Trezzano S/N", icon: "🏫" },
-      { nome: "Sc. Media Gobetti B", indirizzo: "V. Tintoretto 1B — Trezzano S/N", icon: "🏫" },
-      { nome: "Sc. Media Gobetti C", indirizzo: "V. Tintoretto 1C — Trezzano S/N", icon: "🏫" },
-      { nome: "Sc. Media Gobetti D", indirizzo: "V. Tintoretto 1D — Trezzano S/N", icon: "🏫" },
-      { nome: "Cas. Carabinieri", indirizzo: "V. A. Volta — Trezzano S/N", icon: "🚔" },
-      { nome: "C.to Sportivo Fabbri", indirizzo: "V. Europa — Trezzano S/N", icon: "⚽" },
-      { nome: "Centro Socio Culturale", indirizzo: "V. Manzoni 10 — Trezzano S/N", icon: "🏛️" },
-      { nome: "Centro Polif. Marchesina", indirizzo: "V. Castoldi — Trezzano S/N", icon: "🏛️" },
-      { nome: "C.to Sportivo TR4", indirizzo: "V. Salerno — Trezzano S/N", icon: "⚽" },
-      { nome: "Sala Punto Expo", indirizzo: "V. Veneto — Trezzano S/N", icon: "🏛️" },
-      { nome: "Bar Parco Centenario", indirizzo: "Parco Centenario — Trezzano S/N", icon: "🌳" },
-      { nome: "Biblioteca Storie Infinite", indirizzo: "P.za S.M. Teresa di Calcutta — Trezzano S/N", icon: "📚" },
-      { nome: "Casa delle Associazioni", indirizzo: "V. Cavour — Trezzano S/N", icon: "🏠" },
-      { nome: "Cimitero", indirizzo: "V. Fucini — Trezzano S/N", icon: "🕊️" },
-      { nome: "Caserm. Vigili Urbani", indirizzo: "V. Di Vittorio — Trezzano S/N", icon: "🚔" },
-      { nome: "Palazzina Ex Trecate", indirizzo: "Via IV Novembre — Trezzano S/N", icon: "🏢" },
-      { nome: "Villetto Ass.Libere", indirizzo: "V. L.Da Vinci — Trezzano S/N", icon: "🏠" },
-      { nome: "Villetta Donizzetti", indirizzo: "V. Donizzetti — Trezzano S/N", icon: "🏠" },
-      { nome: "App.Cust. Cet.Socio Culturale", indirizzo: "V. Manzoni 10 — Trezzano S/N", icon: "🏠" },
-      { nome: "App.Cust. Bruto El+Mat", indirizzo: "V. Catalani 2/4 — Trezzano S/N", icon: "🏠" },
-      { nome: "App.Cust. Med.Cucciniello", indirizzo: "V. Concordia 5 — Trezzano S/N", icon: "🏠" },
-      { nome: "App.Cust. Mat.Rimenbranze", indirizzo: "V. Rimenbranze — Trezzano S/N", icon: "🏠" },
-      { nome: "Asilo Nido Anna Frank", indirizzo: "V. Malibrant — Trezzano S/N", icon: "👶" },
-      { nome: "Plesso Cucciniello", indirizzo: "V. Concordia — Trezzano S/N", icon: "🏫" },
-    ]
-  }
+const comuni=[
+ {nome:"CORSICO",strutture:[
+  {nome:"Sc. Prim. Battisti",indirizzo:"V. Battisti, 4 — Corsico",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/bovYVM6XwZznPczn9"},
+  {nome:"Sc. Prim. Cabassina",indirizzo:"V. Passaggio Curiel — Corsico",icon:"🏫",notaPos:"Ingresso da V. Marzabotto, seguire indicazioni scuola"},
+  {nome:"Sc. Prim. Dante",indirizzo:"V. Dante, 5/7 — Corsico",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/gyRaFQCa4De79WuX9"},
+  {nome:"Sc. Prim. Malakoff",indirizzo:"V. Malakoff — Corsico",icon:"🏫"},
+  {nome:"Sc. prim. Parini",indirizzo:"V. Parini — Corsico",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/vYRHqNR7hkn6xo6x5",notaPos:"Link diretto all'ingresso scuola media Parini"}
+ ]},
+ {nome:"GAGGIANO",strutture:[
+  {nome:"Sc. Me. Bramante",indirizzo:"V. Al Cornicione 35 — Gaggiano",icon:"🏫"},
+  {nome:"Municipio",indirizzo:"V. Roma 36 — Gaggiano",icon:"🏛️",mapsUrl:"https://maps.app.goo.gl/tcMrsiPCbkYyku1g6",notaPos:"Ingresso posteriore"},
+  {nome:"Sc. El. Matteotti",indirizzo:"V. Matteotti 19 — Gaggiano",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/HZn3CpGjszd4SgXt8"},
+  {nome:"Asilo Nido + C.S.S. + Farm.",indirizzo:"V. de Gasperi 12 — Gaggiano",icon:"🏥",mapsUrl:"https://maps.app.goo.gl/kVQKJzDrJJHkJYLG7"},
+  {nome:"Centro Diurno Anziani",indirizzo:"V. Gozzadini 27 — Gaggiano",icon:"🏠",mapsUrl:"https://maps.app.goo.gl/hsfa8XvfpLpnnQJU9"},
+  {nome:"Sc. Mat. Vigano (ex Scuola Materna)",indirizzo:"V. Certosa 9 — Gaggiano",icon:"🏛️",mapsUrl:"https://maps.app.goo.gl/rkY6BEZat6WpnKxQ6",notaPos:"Ora Centro Culturale. Verificare denominazione attuale"}
+ ]},
+ {nome:"MOTTA VISCONTI",strutture:[
+  {nome:"Sede Municipale",indirizzo:"P.za San Rocco 9/a — Motta Visconti",icon:"🏛️",mapsUrl:"https://maps.app.goo.gl/ygKsvc3kviQm2dEb8",notaPos:"Link diretto all'ingresso municipio"},
+  {nome:"KCS Caregiver (ex RSA)",indirizzo:"P.za 14 Luglio — Motta Visconti",icon:"🏥",mapsUrl:"https://maps.app.goo.gl/bJJh7rkApG9bpr997"},
+  {nome:"Centro Polisportivo Piscina — Gas/CT",indirizzo:"Vi. Ticino, 27 — Motta Visconti",icon:"🏊",mapsUrl:"https://maps.app.goo.gl/bez6e775JzPuFpxY9",notaPos:"Lettura gas e centrale termica in questo punto"},
+  {nome:"Centro Polisportivo Piscina — EE",indirizzo:"Vi. Ticino, 27 — Motta Visconti",icon:"⚡",mapsUrl:"https://maps.app.goo.gl/6uAGu24FNE8TWzraA",notaPos:"Contatore energia elettrica sul lato opposto al campo"},
+  {nome:"Vecchio Torchio",indirizzo:"V. Annoni 11 — Motta Visconti",icon:"🏠"},
+  {nome:"Asilo Nido — EE",indirizzo:"V. Don Giovanni Bosco 48 — Motta Visconti",icon:"👶",mapsUrl:"https://maps.app.goo.gl/fxUSU1aRaurqsXFF9",notaPos:"Contatore energia elettrica. Gas approssimativo: https://maps.app.goo.gl/1N5oJ1gsYtV5owZF7"}
+ ]},
+ {nome:"TREZZANO S/N",strutture:[
+  {nome:"Sc. Mat. Verdi",indirizzo:"V. Verdi — Trezzano S/N",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/DYtUHmFuUPq14zVA9",notaPos:"Ingresso per lettura EE. Gas in comune con Sc. Papa Giovanni XXIII (cancello bianco V. Turati)"},
+  {nome:"Sc. El. Papa G. XXIII",indirizzo:"V. A. Manzoni, 11 — Trezzano S/N",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/6sCYwrzUfW4EkwiW7",notaPos:"Contatore EE qui. Gas poco più avanti: https://maps.app.goo.gl/zBk16vBPsCpLTo8s6 — Gas condiviso con Sc. Verdi"},
+  {nome:"Sede Comunale + Beltramini + Turati",indirizzo:"V. IV Novembre 2/4 — Trezzano S/N",icon:"🏛️",mapsUrl:"https://maps.app.goo.gl/yFG3QyaaeCDwNQ2Y7",notaPos:"Unico ingresso per Sede Comunale, Sc. Mat. Beltramini e Sc. El. Turati. Contatori da individuare internamente, non segnalabili su Maps"},
+  {nome:"Sc. Mat. R. Beltramini",indirizzo:"V. Rimembranze 2 — Trezzano S/N",icon:"🏫",notaPos:"Vedere voce Sede Comunale per accesso e contatori"},
+  {nome:"Sc. El. Turati",indirizzo:"V. IV Novembre — Trezzano S/N",icon:"🏫",notaPos:"Vedere voce Sede Comunale per accesso e contatori"},
+  {nome:"Plesso Giacosa Fogazzaro",indirizzo:"V. Giacosa 14/27 — Trezzano S/N",icon:"🏫",mapsUrl:"https://maps.app.goo.gl/gqKbpw3gjEXCawp9A",notaPos:"Ingresso principale qui. Centrale termica interna: https://maps.app.goo.gl/jsyEsxpLFLPrcARk6"}
+ ]},
+ {nome:"GAGGIANO — 3° RESP.",strutture:[
+  {nome:"Appartamenti",indirizzo:"V. Medici 4 — Fagnano (Gaggiano)",icon:"🏠"},
+  {nome:"Chiesa",indirizzo:"V. Medici — Fagnano (Gaggiano)",icon:"⛪"},
+  {nome:"C.to Socio Sanitario",indirizzo:"V. Marta Lodi — S.Vito (Gaggiano)",icon:"🏥"},
+  {nome:"C.to Sportivo",indirizzo:"V. Marta Lodi — S.Vito (Gaggiano)",icon:"⚽"},
+  {nome:"Spogliatoio C.Calcio",indirizzo:"V. Don Minzoni — Vigano (Gaggiano)",icon:"⚽"},
+  {nome:"C.to Sportivo (palestrina)",indirizzo:"V. Nazaurio Sauro — Vigano (Gaggiano)",icon:"🏋️"},
+  {nome:"Sc. Mat. Bonirola",indirizzo:"V. Italia 22 — Gaggiano",icon:"🏫"},
+  {nome:"Palestra Sc. Elementare",indirizzo:"V. Dante — Gaggiano",icon:"🏋️"}
+ ]},
+ {nome:"TREZZANO S/N — 3° RESP.",strutture:[
+  {nome:"Sc.El/Mat. Franceschi",indirizzo:"V. A. Caro — Trezzano S/N",icon:"🏫"},
+  {nome:"Uffici Comunali",indirizzo:"V. Boito 5/7 — Trezzano S/N",icon:"🏛️"},
+  {nome:"Sc. El/Mat Bruto",indirizzo:"V. Catalani — Trezzano S/N",icon:"🏫"},
+  {nome:"Sc. Media Gobetti A",indirizzo:"V. Tintoretto 1A — Trezzano S/N",icon:"🏫"},
+  {nome:"Sc. Media Gobetti B",indirizzo:"V. Tintoretto 1B — Trezzano S/N",icon:"🏫"},
+  {nome:"Sc. Media Gobetti C",indirizzo:"V. Tintoretto 1C — Trezzano S/N",icon:"🏫"},
+  {nome:"Sc. Media Gobetti D",indirizzo:"V. Tintoretto 1D — Trezzano S/N",icon:"🏫"},
+  {nome:"Cas. Carabinieri",indirizzo:"V. A. Volta — Trezzano S/N",icon:"🚔"},
+  {nome:"C.to Sportivo Fabbri",indirizzo:"V. Europa — Trezzano S/N",icon:"⚽"},
+  {nome:"Centro Socio Culturale",indirizzo:"V. Manzoni 10 — Trezzano S/N",icon:"🏛️"},
+  {nome:"Centro Polif. Marchesina",indirizzo:"V. Castoldi — Trezzano S/N",icon:"🏛️"},
+  {nome:"C.to Sportivo TR4",indirizzo:"V. Salerno — Trezzano S/N",icon:"⚽"},
+  {nome:"Sala Punto Expo",indirizzo:"V. Veneto — Trezzano S/N",icon:"🏛️"},
+  {nome:"Bar Parco Centenario",indirizzo:"Parco Centenario — Trezzano S/N",icon:"🌳"},
+  {nome:"Biblioteca Storie Infinite",indirizzo:"P.za S.M. Teresa di Calcutta — Trezzano S/N",icon:"📚"},
+  {nome:"Casa delle Associazioni",indirizzo:"V. Cavour — Trezzano S/N",icon:"🏠"},
+  {nome:"Cimitero",indirizzo:"V. Fucini — Trezzano S/N",icon:"🕊️"},
+  {nome:"Caserm. Vigili Urbani",indirizzo:"V. Di Vittorio — Trezzano S/N",icon:"🚔"},
+  {nome:"Palazzina Ex Trecate",indirizzo:"Via IV Novembre — Trezzano S/N",icon:"🏢"},
+  {nome:"Villetto Ass.Libere",indirizzo:"V. L.Da Vinci — Trezzano S/N",icon:"🏠"},
+  {nome:"Villetta Donizzetti",indirizzo:"V. Donizzetti — Trezzano S/N",icon:"🏠"},
+  {nome:"App.Cust. Cet.Socio Culturale",indirizzo:"V. Manzoni 10 — Trezzano S/N",icon:"🏠"},
+  {nome:"App.Cust. Bruto El+Mat",indirizzo:"V. Catalani 2/4 — Trezzano S/N",icon:"🏠"},
+  {nome:"App.Cust. Med.Cucciniello",indirizzo:"V. Concordia 5 — Trezzano S/N",icon:"🏠"},
+  {nome:"App.Cust. Mat.Rimenbranze",indirizzo:"V. Rimenbranze — Trezzano S/N",icon:"🏠"},
+  {nome:"Asilo Nido Anna Frank",indirizzo:"V. Malibrant — Trezzano S/N",icon:"👶"},
+  {nome:"Plesso Cucciniello",indirizzo:"V. Concordia — Trezzano S/N",icon:"🏫"}
+ ]}
 ];
 
-// ============================================================
-// STORAGE NOTE
-// ============================================================
-function getNota(comune, nome) {
-  return localStorage.getItem('nota_' + comune + '_' + nome) || '';
-}
-function setNota(comune, nome, testo) {
-  localStorage.setItem('nota_' + comune + '_' + nome, testo);
-}
-function caricaNote() { render(comuni); }
+let current=null, filterMode="all", openSections=new Set([0]);
+const key=(c,s)=>c+"__"+s;
+const clean=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const getNotes=()=>JSON.parse(localStorage.getItem("renovit_notes")||"{}");
+const getFavs=()=>JSON.parse(localStorage.getItem("renovit_favs")||"{}");
+const saveNotes=o=>localStorage.setItem("renovit_notes",JSON.stringify(o));
+const saveFavs=o=>localStorage.setItem("renovit_favs",JSON.stringify(o));
 
-// ============================================================
-// RENDER
-// ============================================================
-let currentStruttura = null;
-
-function render(dati) {
-  const container = document.getElementById('mainContent');
-  container.innerHTML = '';
-
-  dati.forEach((comune, ci) => {
-    if (comune.strutture.length === 0) return;
-
-    const section = document.createElement('div');
-    section.className = 'comune-section';
-    section.style.marginTop = ci === 0 ? '12px' : '12px';
-
-    const header = document.createElement('div');
-    header.className = 'comune-header';
-    header.innerHTML = `
-      <h2>${comune.nome}</h2>
-      <div class="badge">
-        <span>${comune.strutture.length}</span>
-        <span class="chevron" id="chev_${ci}">▼</span>
-      </div>`;
-    header.onclick = () => toggleComune(ci);
-
-    const list = document.createElement('div');
-    list.className = 'strutture-list' + (ci === 0 ? ' open' : '');
-    list.id = 'list_' + ci;
-
-    comune.strutture.forEach((s, si) => {
-      const nota = getNota(comune.nome, s.nome);
-      const item = document.createElement('div');
-      item.className = 'struttura-item';
-      item.innerHTML = `
-        <div class="struttura-icon">${s.icon || '🏢'}</div>
-        <div class="struttura-info">
-          <div class="struttura-nome">${s.nome}</div>
-          <div class="struttura-indirizzo">${s.indirizzo}</div>
-          <div class="struttura-badges">
-            ${s.gestione ? `<span class="badge-small badge-${s.gestione.toLowerCase()}">${s.gestione}</span>` : ''}
-            ${s.keybox === 'Si' ? `<span class="badge-small badge-keybox">🔑 Keybox</span>` : ''}
-            ${s.notaPos ? `<span class="badge-small badge-nota">📍 Nota accesso</span>` : ''}
-            ${nota ? `<span class="badge-small badge-nota">✏️ Nota</span>` : ''}
-          </div>
-        </div>
-        <div class="struttura-arrow">›</div>`;
-      item.onclick = () => apriModal(comune, s);
-      list.appendChild(item);
-    });
-
-    section.appendChild(header);
-    section.appendChild(list);
-    container.appendChild(section);
+function render(){
+ const q=clean(document.getElementById("searchInput").value);
+ const notes=getNotes(),favs=getFavs(),box=document.getElementById("mainContent");
+ let total=0,visible=0,html="";
+ comuni.forEach((c,ci)=>{
+  total+=c.strutture.length;
+  const rows=c.strutture.filter(s=>{
+   const k=key(c.nome,s.nome),note=notes[k]||"";
+   const hay=clean([c.nome,s.nome,s.indirizzo,s.notaPos,s.gestione,s.keybox,note].join(" "));
+   return (!q||hay.includes(q))&&(filterMode==="all"||(filterMode==="fav"&&favs[k])||(filterMode==="notes"&&note));
   });
-}
-
-function toggleComune(ci) {
-  const list = document.getElementById('list_' + ci);
-  const chev = document.getElementById('chev_' + ci);
-  list.classList.toggle('open');
-  chev.classList.toggle('open');
-}
-
-// ============================================================
-// MODAL
-// ============================================================
-function apriModal(comune, s) {
-  currentStruttura = { comune, s };
-  document.getElementById('mComune').textContent = comune.nome;
-  document.getElementById('mNome').textContent = s.nome;
-  document.getElementById('mIndirizzo').textContent = s.indirizzo;
-
-  const gestRow = document.getElementById('mGestioneRow');
-  const keyRow = document.getElementById('mKeyboxRow');
-  const posRow = document.getElementById('mNotaPosRow');
-  const genRow = document.getElementById('mNotaGenRow');
-
-  if (s.gestione) {
-    document.getElementById('mGestione').textContent = s.gestione;
-    gestRow.style.display = 'flex';
-  } else { gestRow.style.display = 'none'; }
-
-  if (s.keybox) {
-    document.getElementById('mKeybox').textContent = s.keybox;
-    keyRow.style.display = 'flex';
-  } else { keyRow.style.display = 'none'; }
-
-  if (s.notaPos) {
-    document.getElementById('mNotaPos').textContent = s.notaPos;
-    posRow.style.display = 'flex';
-  } else { posRow.style.display = 'none'; }
-
-  const notaGen = getNota(comune.nome, s.nome);
-  if (notaGen) {
-    document.getElementById('mNotaGen').textContent = notaGen;
-    genRow.style.display = 'flex';
-  } else { genRow.style.display = 'none'; }
-
-  document.getElementById('notaText').value = notaGen;
-  document.getElementById('notaEditor').classList.remove('show');
-  document.getElementById('modal').classList.add('open');
-}
-
-function closeModal(e) {
-  if (e.target === document.getElementById('modal')) {
-    document.getElementById('modal').classList.remove('open');
-  }
-}
-
-function apriMaps() {
-  if (!currentStruttura) return;
-  const { s } = currentStruttura;
-  if (s.mapsUrl) {
-    window.open(s.mapsUrl, '_blank');
-  } else {
-    const query = encodeURIComponent(s.nome + ' ' + s.indirizzo);
-    window.open('https://maps.google.com/?q=' + query, '_blank');
-  }
-}
-
-function toggleNota() {
-  document.getElementById('notaEditor').classList.toggle('show');
-}
-
-function salvaNota() {
-  if (!currentStruttura) return;
-  const { comune, s } = currentStruttura;
-  const testo = document.getElementById('notaText').value.trim();
-  setNota(comune.nome, s.nome, testo);
-  document.getElementById('notaEditor').classList.remove('show');
-  mostraToast('Nota salvata ✓');
-  render(comuni);
-}
-
-// ============================================================
-// SEARCH
-// ============================================================
-function filterStrutture(q) {
-  if (!q) { render(comuni); return; }
-  q = q.toLowerCase();
-  const filtrati = comuni.map(c => ({
-    ...c,
-    strutture: c.strutture.filter(s =>
-      s.nome.toLowerCase().includes(q) ||
-      s.indirizzo.toLowerCase().includes(q)
-    )
-  }));
-  render(filtrati);
-  // Apri tutti i comuni con risultati
-  filtrati.forEach((c, ci) => {
-    if (c.strutture.length > 0) {
-      const list = document.getElementById('list_' + ci);
-      const chev = document.getElementById('chev_' + ci);
-      if (list) { list.classList.add('open'); }
-      if (chev) { chev.classList.add('open'); }
-    }
+  if(!rows.length)return;
+  visible+=rows.length;
+  const opened=q||filterMode!=="all"||openSections.has(ci);
+  html+=`<section class="section">
+   <button class="section-head" onclick="toggleSection(${ci})"><h2>${esc(c.nome)}</h2><span class="count">${rows.length} ${opened?"▲":"▼"}</span></button>
+   <div class="list ${opened?"open":""}" id="sec${ci}">`;
+  rows.forEach(s=>{
+   const k=key(c.nome,s.nome),note=notes[k]||"",fav=!!favs[k];
+   html+=`<article class="item" onclick='openModal(${JSON.stringify(c.nome)},${JSON.stringify(s.nome)})'>
+    <div class="iicon">${s.icon||"🏢"}</div>
+    <div class="idata"><div class="iname">${esc(s.nome)}</div><div class="iaddr">${esc(s.indirizzo)}</div>
+    <div class="badges">${s.notaPos?'<span class="badge">📍 Accesso</span>':""}${note?'<span class="badge">✏️ Nota</span>':""}${fav?'<span class="badge">⭐ Preferita</span>':""}</div></div>
+    <div class="star">${fav?"★":"›"}</div></article>`;
   });
+  html+="</div></section>";
+ });
+ box.innerHTML=html||`<div class="empty"><div style="font-size:34px">🔎</div><b>Nessun risultato</b><p style="margin-top:6px">Prova con un altro nome, comune o indirizzo.</p></div>`;
+ document.getElementById("stats").textContent=(q||filterMode!=="all")?`${visible} risultati su ${total} strutture`:`${total} strutture in ${comuni.length} gruppi`;
 }
 
-// ============================================================
-// TOAST
-// ============================================================
-function mostraToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
+function esc(v){return String(v||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function toggleSection(i){openSections.has(i)?openSections.delete(i):openSections.add(i);render()}
+function expandAll(){comuni.forEach((_,i)=>openSections.add(i));render()}
+function collapseAll(){openSections.clear();render()}
+function searchNow(){document.getElementById("clearBtn").style.display=document.getElementById("searchInput").value?"block":"none";render()}
+function clearSearch(){document.getElementById("searchInput").value="";searchNow();document.getElementById("searchInput").focus()}
+function setFilter(m){filterMode=m;["allBtn","favBtn","notesBtn"].forEach(id=>document.getElementById(id).classList.remove("active"));document.getElementById(m==="all"?"allBtn":m==="fav"?"favBtn":"notesBtn").classList.add("active");render()}
 
-// ============================================================
-// INIT
-// ============================================================
-render(comuni);
+function findPlace(cn,sn){const c=comuni.find(x=>x.nome===cn);return {c,s:c.strutture.find(x=>x.nome===sn)}}
+function openModal(cn,sn){
+ current=findPlace(cn,sn);const {c,s}=current,k=key(c.nome,s.nome),note=getNotes()[k]||"";
+ document.getElementById("mComune").textContent=c.nome;document.getElementById("mNome").textContent=s.nome;document.getElementById("mIndirizzo").textContent=s.indirizzo;
+ setRow("posRow","mPos",s.notaPos);setRow("gestRow","mGest",s.gestione);setRow("keyRow","mKey",s.keybox);setRow("noteRow","mNote",note);
+ document.getElementById("noteText").value=note;document.getElementById("noteBox").classList.remove("show");document.getElementById("modal").classList.add("open");document.body.style.overflow="hidden";
+}
+function setRow(row,val,text){document.getElementById(row).style.display=text?"block":"none";document.getElementById(val).textContent=text||""}
+function closeModal(){document.getElementById("modal").classList.remove("open");document.body.style.overflow=""}
+function overlayClose(e){if(e.target.id==="modal")closeModal()}
+function openMaps(){if(!current)return;const s=current.s;window.open(s.mapsUrl||("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.nome+" "+s.indirizzo)),"_blank","noopener")}
+async function copyAddress(){if(!current)return;try{await navigator.clipboard.writeText(current.s.indirizzo);toast("Indirizzo copiato ✓")}catch{prompt("Copia l'indirizzo:",current.s.indirizzo)}}
+function toggleFavorite(){if(!current)return;const k=key(current.c.nome,current.s.nome),f=getFavs();f[k]=!f[k];if(!f[k])delete f[k];saveFavs(f);toast(f[k]?"Aggiunta alle preferite ⭐":"Tolto dalle preferite");render()}
+function toggleNote(){document.getElementById("noteBox").classList.toggle("show");setTimeout(()=>document.getElementById("noteText").focus(),100)}
+function saveNote(){if(!current)return;const k=key(current.c.nome,current.s.nome),n=getNotes(),t=document.getElementById("noteText").value.trim();if(t)n[k]=t;else delete n[k];saveNotes(n);setRow("noteRow","mNote",t);document.getElementById("noteBox").classList.remove("show");toast("Nota salvata ✓");render()}
+function deleteNote(){document.getElementById("noteText").value="";saveNote()}
+
+function openMenu(){document.getElementById("menu").classList.add("open")}
+function closeMenu(){document.getElementById("menu").classList.remove("open")}
+function menuClose(e){if(e.target.id==="menu")closeMenu()}
+function exportData(){
+ const data={version:2,exported:new Date().toISOString(),notes:getNotes(),favorites:getFavs()};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download="renovit-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);toast("Backup esportato ✓");closeMenu();
+}
+function importData(e){
+ const file=e.target.files[0];if(!file)return;const r=new FileReader();
+ r.onload=()=>{try{const d=JSON.parse(r.result);if(d.notes)saveNotes(d.notes);if(d.favorites)saveFavs(d.favorites);render();toast("Backup importato ✓");closeMenu()}catch{alert("File di backup non valido.")}};
+ r.readAsText(file);e.target.value="";
+}
+function toggleDark(){document.body.classList.toggle("dark");localStorage.setItem("renovit_dark",document.body.classList.contains("dark")?"1":"0");closeMenu()}
+function toast(t){const el=document.getElementById("toast");el.textContent=t;el.classList.add("show");clearTimeout(window._toast);window._toast=setTimeout(()=>el.classList.remove("show"),2200)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeMenu()}});
+if(localStorage.getItem("renovit_dark")==="1"||(!localStorage.getItem("renovit_dark")&&matchMedia("(prefers-color-scheme:dark)").matches))document.body.classList.add("dark");
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+render();
 </script>
 </body>
 </html>
